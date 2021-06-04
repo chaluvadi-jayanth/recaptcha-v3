@@ -1,58 +1,62 @@
 <template>
-  <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
+  <div>
+    <form @submit.prevent="formSubmit">
+      <label>First name:</label><br />
+      <input type="text" /><br />
+      <label>Last name:</label><br />
+      <input type="text" /><br /><br />
+      <input type="submit" value="Submit" />
+    </form>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'HelloWorld',
-  props: {
-    msg: String
-  }
-}
+  data() {
+    return {};
+  },
+
+  methods: {
+    async formSubmit() {
+      // this.$recaptchaInstance.hideBadge();
+      // (optional) Wait until recaptcha has been loaded.
+      await this.$recaptchaLoaded();
+
+      // Execute reCAPTCHA with action "login".
+      const token = await this.$recaptcha("submit");
+      console.log(token);
+      // let token1 = null;
+      let headers = new Headers();
+      headers.append("Access-Control-Allow-Origin", "http://localhost:8080");
+      headers.append("Access-Control-Allow-Credentials", "true");
+      // Access-Control-Allow-Origin:  http://127.0.0.1:3000
+      headers.append("Access-Control-Allow-Methods", "POST");
+      headers.append(
+        "Access-Control-Allow-Headers",
+        "Content-Type",
+        "Authorization"
+      );
+      headers.append("Access-Control-Allow-Origin", " *");
+      headers.append("GET", "POST", "OPTIONS");
+      headers.append("Content-Type", "application/json"),
+        headers.append("charset", "utf-8");
+      if (token) {
+        // console.log(token);
+        fetch(
+          ` https://www.google.com/recaptcha/api/siteverify?secret=6LfHRAwbAAAAABB3dlImlVHnHay9sWjMOYtWwrq0&response=${token} `,
+          {
+            method: "POST",
+            headers: headers,
+          }
+        )
+          .then((res) => res.json())
+          .then((data) => console.log(data));
+      }
+      // Do stuff with the received token.
+    },
+  },
+};
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-h3 {
-  margin: 40px 0 0;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
+<style>
 </style>
