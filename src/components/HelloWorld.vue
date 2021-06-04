@@ -43,7 +43,7 @@ export default {
       if (token) {
         // console.log(token);
         fetch(
-          ` https://www.google.com/recaptcha/api/siteverify?secret=6LfHRAwbAAAAABB3dlImlVHnHay9sWjMOYtWwrq0&response=${token} `,
+          ` https://www.google.com/recaptcha/api/siteverify?secret=<key>&response=${token} `,
           {
             method: "POST",
             headers: headers,
